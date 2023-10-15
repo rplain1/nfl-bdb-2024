@@ -1,0 +1,52 @@
+---
+title: "DuckDB Initialization"
+format: html
+---
+
+## Read Files and Output to DuckDB
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+df <- read_csv('data/tracking_week_1.csv')
+```
+
+```{r}
+
+read_csv_week <- function(file_name) {
+  readr::read_csv(file_name) |> 
+    mutate(week = str_extract(file_name, '\\d'))
+}
+
+df_tracking <- paste0("data/", list.files(path = 'data/', pattern = "tracking*")) |> 
+  map_dfr(read_csv_week)
+
+```
+
+
+```{r}
+library(duckdb)
+con <- dbConnect(duckdb(), dbdir = 'data/bdb.duckdb')
+dbWriteTable(con, "tracking", df_tracking)
+```
+
+```{r}
+players <- read_csv('data/players.csv')
+games <- read_csv('data/games.csv')
+plays <- read_csv('data/plays.csv')
+tackles <- read_csv('data/tackles.csv')
+
+dbWriteTable(con, "players", players)
+dbWriteTable(con, "games", games)
+dbWriteTable(con, "plays", plays)
+dbWriteTable(con, "tackles", tackles)
+```
+
+```{r}
+tbl(con, "games")
+tbl(con, "tackles")
+```
+
