@@ -18,7 +18,12 @@ df <- read_csv('data/tracking_week_1.csv')
 
 read_csv_week <- function(file_name) {
   readr::read_csv(file_name) |> 
-    mutate(week = str_extract(file_name, '\\d'))
+    mutate(week = str_extract(file_name, '\\d')) |> 
+    mutate(
+      x_std = ifelse(playDirection == 'left', 120-x, x),
+      y_std = ifelse(playDirection == 'left', 160/3 - y, y)
+    ) |> 
+    janitor::clean_names()
 }
 
 df_tracking <- paste0("data/", list.files(path = 'data/', pattern = "tracking*")) |> 
@@ -30,23 +35,24 @@ df_tracking <- paste0("data/", list.files(path = 'data/', pattern = "tracking*")
 ```{r}
 library(duckdb)
 con <- dbConnect(duckdb(), dbdir = 'data/bdb.duckdb')
-dbWriteTable(con, "tracking", df_tracking)
+dbWriteTable(con, "tracking", df_tracking, overwrite = TRUE)
+message("Table Updated")
 ```
 
 ```{r}
-players <- read_csv('data/players.csv')
-games <- read_csv('data/games.csv')
-plays <- read_csv('data/plays.csv')
-tackles <- read_csv('data/tackles.csv')
+players <- read_csv('data/players.csv') |> janitor::clean_names()
+games <- read_csv('data/games.csv') |> janitor::clean_names()
+plays <- read_csv('data/plays.csv') |> janitor::clean_names()
+tackles <- read_csv('data/tackles.csv') |> janitor::clean_names()
 
-dbWriteTable(con, "players", players)
-dbWriteTable(con, "games", games)
-dbWriteTable(con, "plays", plays)
-dbWriteTable(con, "tackles", tackles)
+dbWriteTable(con, "players", players, overwrite = TRUE)
+dbWriteTable(con, "games", games, overwrite = TRUE)
+dbWriteTable(con, "plays", plays, overwrite = TRUE)
+dbWriteTable(con, "tackles", tackles, overwrite = TRUE)
 ```
 
 ```{r}
-tbl(con, "games")
+tbl(con, "tracking")
 tbl(con, "tackles")
 ```
 
