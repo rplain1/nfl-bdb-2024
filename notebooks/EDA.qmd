@@ -1,0 +1,341 @@
+---
+title: "EDA"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(duckdb)
+
+con <- dbConnect(duckdb(), 'data/bdb.duckdb')
+tbl(con, "tackles")
+```
+
+
+
+```{r}
+
+tbl(con, "plays") |> 
+  filter(game_id == 2022090800) |> collect() |> select(play_id, play_description)
+
+```
+
+
+```{r}
+tbl(con, "tracking") |> 
+  filter(game_id == 2022090800, play_id == 2979) |> #summarise(max(frameId))
+  filter(frame_id == 1) |> 
+  collect() |> 
+  ggplot(aes(x, y, color = club)) +
+  #geom_text(aes(label = jerseyNumber))# +
+  geom_point(alpha = 0.3)
+```
+
+
+```{r}
+# Prep data for plotting
+example_nfl_play <- tbl(con, "tracking") |> 
+  filter(game_id == 2022102309, play_id == 3809) |> 
+  collect() |> 
+  mutate(
+    color = case_when(
+      club == 'football' ~ '#624a2e',
+      club == 'LA' ~ 'yellow',
+      club == 'BUF' ~ 'red'
+    ),
+    frameId = frame_id
+  )
+
+back_col <- 'white'
+front_col <- 'black'
+## Specific boundaries for a given play
+ymin <- max(round(min(example_nfl_play$x, na.rm = TRUE) - 10, -1), 0)
+ymax <- min(round(max(example_nfl_play$x, na.rm = TRUE) + 10, -1), 120)
+p <- ggplot(example_nfl_play, aes(y_std, x_std)) +
+  geom_point(aes(color = club))  +
+  coord_fixed(ylim = c(0, 120), xlim = c(0, 50)) +
+  #xlim(c(0, 53.3)) +
+  transition_time(frame_id) +
+  ease_aes('linear') +
+  NULL
+
+
+animate(p, fps = 10, nframe = length(unique(example_nfl_play$frame_id)))
+
+    
+```
+
+
+# Seahawks Touchdown
+
+```{r}
+tbl(con, "plays") |> 
+  filter(game_id == 2022102309, play_id == 3809) |> collect() |> glimpse()
+```
+
+
+```{r}
+tmp_df <- tbl(con, "tracking") |> 
+  filter(game_id == 2022102309, play_id == 3809) |> #summarise(max(frame_id)) --127
+  filter(frame_id == 1) |> 
+  collect() 
+  
+
+tmp_df
+
+
+tmp_df |> 
+  mutate(shape = case_when(club == 'football' ~ 18, club == 'LAC' ~ 1, TRUE ~ 4)) |> 
+  ggplot(aes(x, y, shape = shape)) +
+  #geom_text(aes(label = jerseyNumber))# +
+  geom_point(alpha = 0.3) +
+  scale_color_manual(values = c('red', 'cyan', 'green')) +
+  scale_shape_identity() +
+  xlim(c(0, 120)) +
+  ylim(c(0, 53.3)) 
+```
+
+# Tackle Made
+
+
+
+
+```{r}
+tmp_df <- tbl(con, "tracking") |> 
+  filter(game_id == 2022090800, play_id == 101) |> #summarise(max(frame_id)) --127
+  #filter(frame_id == 1) |> 
+  collect() 
+  
+
+tmp_df
+
+
+tmp_df |> 
+  filter(frame_id == 40) |> 
+  mutate(shape = case_when(club == 'football' ~ 18, club == 'LAC' ~ 1, TRUE ~ 4)) |> 
+  ggplot(aes(x_std, y_std, color=club)) +
+  #geom_text(aes(label = jerseyNumber))# +
+  geom_point(data = \(x) x |> filter(club == 'football')) +
+  geom_point(
+    #alpha = 0.03, 
+    data = \(x) x |> filter(club != 'football')
+    ) +
+  scale_color_manual(values = c('red', 'cyan', 'darkgreen')) +
+  scale_shape_identity() +
+  xlim(c(0, 120)) +
+  ylim(c(0, 53.3)) 
+```
+
+
+
+```{r}
+tbl(con, "plays") |> 
+  left_join(tbl(con, "tackles")) |> 
+  filter(tackle == 1) |> 
+  select(play_description)
+
+tbl(con, "players")
+tbl(con, "tracking")
+
+tbl(con, "tracking") |> 
+  group_by(game_id, play_id) |> 
+  summarise(tackle_ = max(event == 'tackle')) |> 
+  left_join(tbl(con, "tackles")) |> 
+  mutate(same = as.integer(tackle_ ) == tackle) |>
+  filter(same == FALSE)
+  summarise(n = n())
+```
+
+
+## Ball Snap
+
+```{r}
+tbl(con, "tracking") |> 
+  count(event) |> 
+  collect() |> 
+  print(n = 32)
+
+tbl(con, "tracking") |> 
+  summarise(
+    snaps = n_distinct(ifelse(event %in% c('ball_snap', 'snap_direct', 'autoevent_ballsnap'), play_id, NULL)),
+    tackles = n_distinct(ifelse(event %in% c('tackle'), play_id, NULL)),
+    n = n_distinct(play_id),
+    .by = game_id
+  ) |> 
+  collect() |> 
+  summarise(
+    snap_percent = sum(snaps) / sum(n),
+    tackle_percent = sum(tackles) / sum(n)
+  )
+```
+
+51% of the plays have likely full play information, meaning that they had a snap involved
+
+
+```{r}
+tbl(con, "tracking") |> 
+  filter(event == 'tackle') |> 
+  count(game_id, play_id)
+
+tbl(con, "tracking") |> 
+  filter(game_id == 2022091108, play_id == 1509) |> 
+  collect() |> 
+  View()
+```
+
+
+```{r}
+tmp_df <- tbl(con, "tracking") |> 
+  filter(game_id == 2022090800, play_id == 101) |> #summarise(max(frame_id)) --127
+  #filter(frame_id == 1) |> 
+  collect() 
+  
+
+tmp_df
+
+
+tmp_df |> 
+  filter(frame_id == 1) |> 
+  mutate(shape = case_when(club == 'football' ~ 18, club == 'LAC' ~ 1, TRUE ~ 4)) |> 
+  ggplot(aes(x_std, y_std, color=club)) +
+  #geom_text(aes(label = jerseyNumber))# +
+  geom_point(data = \(x) x |> filter(club == 'football')) +
+  geom_point(
+    #alpha = 0.03, 
+    data = \(x) x |> filter(club != 'football')
+    ) +
+  scale_color_manual(values = c('red', 'cyan', 'darkgreen')) +
+  scale_shape_identity() +
+  xlim(c(0, 120)) +
+  ylim(c(0, 53.3)) 
+
+
+# Prep data for plotting
+example_nfl_play <- tbl(con, "tracking") |> 
+  filter(game_id == 2022090800, play_id == 101) |> 
+  collect() |> 
+  mutate(
+    color = case_when(
+      club == 'football' ~ '#624a2e',
+      club == 'LA' ~ 'yellow',
+      club == 'BUF' ~ 'red'
+    ),
+    frameId = frame_id
+  )
+
+example_nfl_play <- example_nfl_play |> 
+  left_join(
+    tbl(con, "tackles") |> 
+      filter(game_id == 2022090800, play_id == 101) |> 
+      collect(),
+    by = c('play_id', 'game_id', 'nfl_id')) |> 
+  mutate(tackle = ifelse(!is.))
+
+back_col <- 'white'
+front_col <- 'black'
+## Specific boundaries for a given play
+ymin <- max(round(min(example_nfl_play$x, na.rm = TRUE) - 10, -1), 0)
+ymax <- min(round(max(example_nfl_play$x, na.rm = TRUE) + 10, -1), 120)
+p <- ggplot(example_nfl_play, aes(y_std, x_std)) +
+  geom_point(aes(color = club, shape = !is.na(tackle)))  +
+  coord_fixed(ylim = c(0, 120), xlim = c(0, 50)) +
+  #xlim(c(0, 53.3)) +
+  transition_time(frame_id) +
+  ease_aes('linear') +
+  NULL
+
+
+animate(p, fps = 10, nframe = length(unique(example_nfl_play$frame_id)))
+
+```
+
+
+```{r}
+
+tmp_df <- tbl(con, "tracking") |> 
+  filter(game_id == 2022100903, play_id == 3266) |> #summarise(max(frame_id)) --127
+  #filter(frame_id == 1) |> 
+  collect() 
+  
+
+tmp_df
+
+
+tmp_df |> 
+  filter(frame_id == 1) |> 
+  mutate(shape = case_when(club == 'football' ~ 18, club == 'LAC' ~ 1, TRUE ~ 4)) |> 
+  ggplot(aes(x_std, y_std, color=club)) +
+  #geom_text(aes(label = jerseyNumber))# +
+  geom_point(data = \(x) x |> filter(club == 'football')) +
+  geom_point(
+    #alpha = 0.03, 
+    data = \(x) x |> filter(club != 'football')
+    ) +
+  scale_color_manual(values = c('red', 'cyan', 'darkgreen')) +
+  scale_shape_identity() +
+  xlim(c(0, 120)) +
+  ylim(c(0, 53.3)) 
+
+
+# Prep data for plotting
+example_nfl_play <- tbl(con, "tracking") |> 
+  filter(game_id == 2022100903, play_id == 3266) |> 
+  collect() |> 
+  mutate(
+    color = case_when(
+      club == 'football' ~ '#624a2e',
+      club == 'LA' ~ 'yellow',
+      club == 'BUF' ~ 'red'
+    ),
+    frameId = frame_id
+  )
+
+
+
+example_nfl_play <- example_nfl_play |> 
+  left_join(
+    tbl(con, "tackles") |> 
+      filter(game_id == 2022100903, play_id == 3266) |> 
+      collect(),
+    by = c('play_id', 'game_id', 'nfl_id')) |> 
+  mutate(
+    tackle = case_when(
+      tackle == 1 ~ 'Tackle',
+      assist == 1 ~ 'Assist',
+      pff_missed_tackle == 1 ~ 'Miss',
+      TRUE ~ ''
+    )
+  )
+
+back_col <- 'white'
+front_col <- 'black'
+## Specific boundaries for a given play
+ymin <- max(round(min(example_nfl_play$x, na.rm = TRUE) - 10, -1), 0)
+ymax <- min(round(max(example_nfl_play$x, na.rm = TRUE) + 10, -1), 120)
+p <- ggplot(example_nfl_play, aes(y_std, x_std)) +
+  geom_point(aes(shape = club, color = tackle))  +
+  coord_fixed(ylim = c(0, 120), xlim = c(0, 50)) +
+  #xlim(c(0, 53.3)) +
+  transition_time(frame_id) +
+  ease_aes('linear') +
+  NULL
+
+
+animate(p, fps = 10, nframe = length(unique(example_nfl_play$frame_id)))
+
+
+tbl(con, "tackles") |> filter(game_id == 2022100903, play_id == 3266)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
