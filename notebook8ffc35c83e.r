@@ -3,21 +3,21 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "91452766",
+   "id": "d046b7a5",
    "metadata": {
     "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
     "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:20:43.775901Z",
-     "iopub.status.busy": "2023-12-28T05:20:43.773438Z",
-     "iopub.status.idle": "2023-12-28T05:20:48.238105Z",
-     "shell.execute_reply": "2023-12-28T05:20:48.235841Z"
+     "iopub.execute_input": "2023-12-28T05:42:16.337241Z",
+     "iopub.status.busy": "2023-12-28T05:42:16.334759Z",
+     "iopub.status.idle": "2023-12-28T05:42:20.711520Z",
+     "shell.execute_reply": "2023-12-28T05:42:20.709138Z"
     },
     "papermill": {
-     "duration": 4.47535,
-     "end_time": "2023-12-28T05:20:48.240910",
+     "duration": 4.3876,
+     "end_time": "2023-12-28T05:42:20.715096",
      "exception": false,
-     "start_time": "2023-12-28T05:20:43.765560",
+     "start_time": "2023-12-28T05:42:16.327496",
      "status": "completed"
     },
     "tags": []
@@ -53,7 +53,7 @@
       "\u001b[31m✖\u001b[39m \u001b[34mdplyr\u001b[39m::\u001b[32mlag()\u001b[39m      masks \u001b[34mstats\u001b[39m::lag()\n",
       "\u001b[31m✖\u001b[39m \u001b[34myardstick\u001b[39m::\u001b[32mspec()\u001b[39m masks \u001b[34mreadr\u001b[39m::spec()\n",
       "\u001b[31m✖\u001b[39m \u001b[34mrecipes\u001b[39m::\u001b[32mstep()\u001b[39m   masks \u001b[34mstats\u001b[39m::step()\n",
-      "\u001b[34m•\u001b[39m Learn how to get started at \u001b[32mhttps://www.tidymodels.org/start/\u001b[39m\n",
+      "\u001b[34m•\u001b[39m Use \u001b[32mtidymodels_prefer()\u001b[39m to resolve common conflicts.\n",
       "\n"
      ]
     }
@@ -66,19 +66,19 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "ac7b13c7",
+   "id": "154e78c2",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:20:48.289098Z",
-     "iopub.status.busy": "2023-12-28T05:20:48.254124Z",
-     "iopub.status.idle": "2023-12-28T05:20:53.809156Z",
-     "shell.execute_reply": "2023-12-28T05:20:53.806765Z"
+     "iopub.execute_input": "2023-12-28T05:42:20.758879Z",
+     "iopub.status.busy": "2023-12-28T05:42:20.727032Z",
+     "iopub.status.idle": "2023-12-28T05:42:26.169702Z",
+     "shell.execute_reply": "2023-12-28T05:42:26.167380Z"
     },
     "papermill": {
-     "duration": 5.567126,
-     "end_time": "2023-12-28T05:20:53.813111",
+     "duration": 5.453272,
+     "end_time": "2023-12-28T05:42:26.173044",
      "exception": false,
-     "start_time": "2023-12-28T05:20:48.245985",
+     "start_time": "2023-12-28T05:42:20.719772",
      "status": "completed"
     },
     "tags": []
@@ -139,19 +139,19 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "a8b66683",
+   "id": "bcdc88aa",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:20:53.829350Z",
-     "iopub.status.busy": "2023-12-28T05:20:53.827529Z",
-     "iopub.status.idle": "2023-12-28T05:20:53.892988Z",
-     "shell.execute_reply": "2023-12-28T05:20:53.890183Z"
+     "iopub.execute_input": "2023-12-28T05:42:26.187351Z",
+     "iopub.status.busy": "2023-12-28T05:42:26.185603Z",
+     "iopub.status.idle": "2023-12-28T05:42:26.246358Z",
+     "shell.execute_reply": "2023-12-28T05:42:26.243470Z"
     },
     "papermill": {
-     "duration": 0.077409,
-     "end_time": "2023-12-28T05:20:53.896607",
+     "duration": 0.071335,
+     "end_time": "2023-12-28T05:42:26.249538",
      "exception": false,
-     "start_time": "2023-12-28T05:20:53.819198",
+     "start_time": "2023-12-28T05:42:26.178203",
      "status": "completed"
     },
     "tags": []
@@ -239,19 +239,19 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "9379e227",
+   "id": "1fde6cf0",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:20:53.913938Z",
-     "iopub.status.busy": "2023-12-28T05:20:53.912173Z",
-     "iopub.status.idle": "2023-12-28T05:21:18.279830Z",
-     "shell.execute_reply": "2023-12-28T05:21:18.277408Z"
+     "iopub.execute_input": "2023-12-28T05:42:26.264491Z",
+     "iopub.status.busy": "2023-12-28T05:42:26.262810Z",
+     "iopub.status.idle": "2023-12-28T05:42:47.495021Z",
+     "shell.execute_reply": "2023-12-28T05:42:47.492980Z"
     },
     "papermill": {
-     "duration": 24.379757,
-     "end_time": "2023-12-28T05:21:18.282929",
+     "duration": 21.243479,
+     "end_time": "2023-12-28T05:42:47.498411",
      "exception": false,
-     "start_time": "2023-12-28T05:20:53.903172",
+     "start_time": "2023-12-28T05:42:26.254932",
      "status": "completed"
     },
     "tags": []
@@ -286,13 +286,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "dbb5b5bd",
+   "id": "8ef1e583",
    "metadata": {
     "papermill": {
-     "duration": 0.006536,
-     "end_time": "2023-12-28T05:21:18.296932",
+     "duration": 0.005407,
+     "end_time": "2023-12-28T05:42:47.509353",
      "exception": false,
-     "start_time": "2023-12-28T05:21:18.290396",
+     "start_time": "2023-12-28T05:42:47.503946",
      "status": "completed"
     },
     "tags": []
@@ -307,19 +307,19 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "8fdb0b31",
+   "id": "9e473972",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:21:18.314337Z",
-     "iopub.status.busy": "2023-12-28T05:21:18.312523Z",
-     "iopub.status.idle": "2023-12-28T05:21:19.049050Z",
-     "shell.execute_reply": "2023-12-28T05:21:19.046927Z"
+     "iopub.execute_input": "2023-12-28T05:42:47.524394Z",
+     "iopub.status.busy": "2023-12-28T05:42:47.522658Z",
+     "iopub.status.idle": "2023-12-28T05:42:48.202123Z",
+     "shell.execute_reply": "2023-12-28T05:42:48.200165Z"
     },
     "papermill": {
-     "duration": 0.748848,
-     "end_time": "2023-12-28T05:21:19.052503",
+     "duration": 0.690203,
+     "end_time": "2023-12-28T05:42:48.204917",
      "exception": false,
-     "start_time": "2023-12-28T05:21:18.303655",
+     "start_time": "2023-12-28T05:42:47.514714",
      "status": "completed"
     },
     "tags": []
@@ -350,19 +350,19 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "422d5d2c",
+   "id": "490f2963",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:21:19.073030Z",
-     "iopub.status.busy": "2023-12-28T05:21:19.071225Z",
-     "iopub.status.idle": "2023-12-28T05:21:23.900653Z",
-     "shell.execute_reply": "2023-12-28T05:21:23.898287Z"
+     "iopub.execute_input": "2023-12-28T05:42:48.221915Z",
+     "iopub.status.busy": "2023-12-28T05:42:48.220186Z",
+     "iopub.status.idle": "2023-12-28T05:42:52.841654Z",
+     "shell.execute_reply": "2023-12-28T05:42:52.839493Z"
     },
     "papermill": {
-     "duration": 4.848496,
-     "end_time": "2023-12-28T05:21:23.908805",
+     "duration": 4.639536,
+     "end_time": "2023-12-28T05:42:52.850573",
      "exception": false,
-     "start_time": "2023-12-28T05:21:19.060309",
+     "start_time": "2023-12-28T05:42:48.211037",
      "status": "completed"
     },
     "tags": []
@@ -401,19 +401,19 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "1d6565e1",
+   "id": "1104097d",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:21:23.940144Z",
-     "iopub.status.busy": "2023-12-28T05:21:23.938247Z",
-     "iopub.status.idle": "2023-12-28T05:21:23.961033Z",
-     "shell.execute_reply": "2023-12-28T05:21:23.958966Z"
+     "iopub.execute_input": "2023-12-28T05:42:52.880958Z",
+     "iopub.status.busy": "2023-12-28T05:42:52.879091Z",
+     "iopub.status.idle": "2023-12-28T05:42:52.902483Z",
+     "shell.execute_reply": "2023-12-28T05:42:52.900467Z"
     },
     "papermill": {
-     "duration": 0.041798,
-     "end_time": "2023-12-28T05:21:23.963849",
+     "duration": 0.04223,
+     "end_time": "2023-12-28T05:42:52.905955",
      "exception": false,
-     "start_time": "2023-12-28T05:21:23.922051",
+     "start_time": "2023-12-28T05:42:52.863725",
      "status": "completed"
     },
     "tags": []
@@ -438,19 +438,19 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "31e53041",
+   "id": "8c658d66",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:21:23.994281Z",
-     "iopub.status.busy": "2023-12-28T05:21:23.992526Z",
-     "iopub.status.idle": "2023-12-28T05:21:24.532912Z",
-     "shell.execute_reply": "2023-12-28T05:21:24.530718Z"
+     "iopub.execute_input": "2023-12-28T05:42:52.934259Z",
+     "iopub.status.busy": "2023-12-28T05:42:52.932077Z",
+     "iopub.status.idle": "2023-12-28T05:42:53.476715Z",
+     "shell.execute_reply": "2023-12-28T05:42:53.474659Z"
     },
     "papermill": {
-     "duration": 0.558928,
-     "end_time": "2023-12-28T05:21:24.535898",
+     "duration": 0.56171,
+     "end_time": "2023-12-28T05:42:53.479519",
      "exception": false,
-     "start_time": "2023-12-28T05:21:23.976970",
+     "start_time": "2023-12-28T05:42:52.917809",
      "status": "completed"
     },
     "tags": []
@@ -511,13 +511,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "f48d5711",
+   "id": "7b60c87d",
    "metadata": {
     "papermill": {
-     "duration": 0.013463,
-     "end_time": "2023-12-28T05:21:24.562832",
+     "duration": 0.012051,
+     "end_time": "2023-12-28T05:42:53.503762",
      "exception": false,
-     "start_time": "2023-12-28T05:21:24.549369",
+     "start_time": "2023-12-28T05:42:53.491711",
      "status": "completed"
     },
     "tags": []
@@ -531,19 +531,19 @@
   {
    "cell_type": "code",
    "execution_count": 9,
-   "id": "8ed7900d",
+   "id": "7184e3b3",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-12-28T05:21:24.594761Z",
-     "iopub.status.busy": "2023-12-28T05:21:24.592589Z",
-     "iopub.status.idle": "2023-12-28T05:21:24.801237Z",
-     "shell.execute_reply": "2023-12-28T05:21:24.798246Z"
+     "iopub.execute_input": "2023-12-28T05:42:53.532180Z",
+     "iopub.status.busy": "2023-12-28T05:42:53.530449Z",
+     "iopub.status.idle": "2023-12-28T05:42:53.716897Z",
+     "shell.execute_reply": "2023-12-28T05:42:53.714920Z"
     },
     "papermill": {
-     "duration": 0.22843,
-     "end_time": "2023-12-28T05:21:24.804708",
+     "duration": 0.203756,
+     "end_time": "2023-12-28T05:42:53.719571",
      "exception": false,
-     "start_time": "2023-12-28T05:21:24.576278",
+     "start_time": "2023-12-28T05:42:53.515815",
      "status": "completed"
     },
     "scrolled": true,
@@ -753,19 +753,225 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
-   "id": "3eb1f553",
+   "execution_count": 10,
+   "id": "47309425",
    "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-12-28T05:42:53.748729Z",
+     "iopub.status.busy": "2023-12-28T05:42:53.747029Z",
+     "iopub.status.idle": "2023-12-28T05:42:53.763753Z",
+     "shell.execute_reply": "2023-12-28T05:42:53.761792Z"
+    },
     "papermill": {
-     "duration": 0.013977,
-     "end_time": "2023-12-28T05:21:24.832702",
+     "duration": 0.035017,
+     "end_time": "2023-12-28T05:42:53.767222",
      "exception": false,
-     "start_time": "2023-12-28T05:21:24.818725",
+     "start_time": "2023-12-28T05:42:53.732205",
      "status": "completed"
     },
     "tags": []
    },
    "outputs": [],
+   "source": [
+    "read_nfl_data <- function(x) {\n",
+    "    message(x)\n",
+    "    read_csv(x) %>%\n",
+    "    mutate(\n",
+    "        x = ifelse(playDirection == 'left', 120-x, x),\n",
+    "        y = ifelse(playDirection == 'left', 160/3 - y, y),\n",
+    "        o = ifelse(playDirection == 'left', abs(o - 180), o), \n",
+    "        dir = ifelse(playDirection == 'left', abs(dir - 180), dir),\n",
+    "        x_end = s*cos((90 - dir)*pi / 180) + x,\n",
+    "        y_end = s*sin((90 - dir)*pi / 180) + y,\n",
+    "    ) %>%\n",
+    "    group_by(gameId, playId) %>%\n",
+    "    mutate(\n",
+    "        x_start = min(ifelse(club == 'football' & frameId == 1, x, NA), na.rm = TRUE)\n",
+    "    ) %>% \n",
+    "    ungroup() %>%\n",
+    "    mutate(x = x - x_start) %>%\n",
+    "    group_by(gameId, playId, frameId) %>%\n",
+    "    mutate(\n",
+    "        x_ball = min(if_else(club == 'football', x, NA), na.rm = TRUE),\n",
+    "        y_ball = min(if_else(club == 'football', y, NA), na.rm = TRUE),\n",
+    "    ) %>%\n",
+    "    ungroup() %>%\n",
+    "    mutate(\n",
+    "        dist_from_ball = sqrt( ((x - x_ball) ** 2) + ((y - y_ball) ** 2) )\n",
+    "    )\n",
+    "}\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "be472eaa",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-12-28T05:42:53.796100Z",
+     "iopub.status.busy": "2023-12-28T05:42:53.794409Z",
+     "iopub.status.idle": "2023-12-28T05:46:28.198790Z",
+     "shell.execute_reply": "2023-12-28T05:46:28.196639Z"
+    },
+    "papermill": {
+     "duration": 214.422595,
+     "end_time": "2023-12-28T05:46:28.202290",
+     "exception": false,
+     "start_time": "2023-12-28T05:42:53.779695",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_1.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1407439\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_2.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1371600\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_3.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1415788\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_4.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1418686\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_5.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1476232\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_6.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1249365\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_7.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1291493\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_8.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1406772\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n",
+      "/kaggle/input/nfl-big-data-bowl-2024/tracking_week_9.csv\n",
+      "\n",
+      "\u001b[1mRows: \u001b[22m\u001b[34m1150023\u001b[39m \u001b[1mColumns: \u001b[22m\u001b[34m17\u001b[39m\n",
+      "\u001b[36m──\u001b[39m \u001b[1mColumn specification\u001b[22m \u001b[36m────────────────────────────────────────────────────────\u001b[39m\n",
+      "\u001b[1mDelimiter:\u001b[22m \",\"\n",
+      "\u001b[31mchr\u001b[39m   (4): displayName, club, playDirection, event\n",
+      "\u001b[32mdbl\u001b[39m  (12): gameId, playId, nflId, frameId, jerseyNumber, x, y, s, a, dis, o,...\n",
+      "\u001b[34mdttm\u001b[39m  (1): time\n",
+      "\n",
+      "\u001b[36mℹ\u001b[39m Use `spec()` to retrieve the full column specification for this data.\n",
+      "\u001b[36mℹ\u001b[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_all_tracking <- list.files(path = '/kaggle/input/nfl-big-data-bowl-2024', pattern = 'tracking*') %>%\n",
+    "map_dfr(~read_nfl_data(paste0(project_dir, '/', .)))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "2942c751",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-12-28T05:46:28.238671Z",
+     "iopub.status.busy": "2023-12-28T05:46:28.236832Z",
+     "iopub.status.idle": "2023-12-28T05:48:13.726674Z",
+     "shell.execute_reply": "2023-12-28T05:48:13.724249Z"
+    },
+    "papermill": {
+     "duration": 105.513093,
+     "end_time": "2023-12-28T05:48:13.730567",
+     "exception": false,
+     "start_time": "2023-12-28T05:46:28.217474",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "saveRDS(df_all_tracking, '/kaggle/working/df_all_tracking.rds')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "54f4f427",
+   "metadata": {
+    "papermill": {
+     "duration": 0.015102,
+     "end_time": "2023-12-28T05:48:13.766073",
+     "exception": false,
+     "start_time": "2023-12-28T05:48:13.750971",
+     "status": "completed"
+    },
+    "tags": []
+   },
    "source": []
   }
  ],
@@ -800,14 +1006,14 @@
   },
   "papermill": {
    "default_parameters": {},
-   "duration": 44.998285,
-   "end_time": "2023-12-28T05:21:24.970312",
+   "duration": 361.760222,
+   "end_time": "2023-12-28T05:48:14.208014",
    "environment_variables": {},
    "exception": null,
    "input_path": "__notebook__.ipynb",
    "output_path": "__notebook__.ipynb",
    "parameters": {},
-   "start_time": "2023-12-28T05:20:39.972027",
+   "start_time": "2023-12-28T05:42:12.447792",
    "version": "2.5.0"
   }
  },
