@@ -1,0 +1,512 @@
+---
+title: "Untitled"
+format: html
+---
+
+Data has been adjusted so that all all offensive plays are going in the **RIGHT** direction: x, y, dir, o
+
+```{r}
+
+library(tidyverse)
+con <- DBI::dbConnect(duckdb::duckdb(), 'data/bdb.duckdb')
+
+tracking <- tbl(con, "tracking") |> 
+  left_join(tbl(con, "plays"), by = c('game_id', 'play_id')) |> 
+  left_join(tbl(con, "tackles"), by = c('game_id', 'play_id', 'nfl_id')) |> 
+  filter(is.na(pass_result)) |> 
+  mutate(x_std = sql("x_std - MIN(CASE WHEN club = 'football' THEN x_std ELSE NULL END) OVER (PARTITION BY game_id, play_id)")) |> 
+  filter(club != 'football') |>
+  left_join(
+    tbl(con, "tracking") |> 
+      filter(club == 'football') |> 
+      select(game_id, play_id, frame_id, x = x_std, y = y_std, s, a, dis, o, dir),
+    by = c('game_id', 'play_id', 'frame_id'),
+    suffix = c('', '_ball')
+  ) |> 
+  select(-x, -y) |> 
+  rename(x = x_std, y = y_std) |> 
+  mutate(
+    o = ifelse(play_direction == 'left', abs(o - 180), o), 
+    o_ball = ifelse(play_direction == 'left', abs(o_ball - 180), o_ball), 
+    dir = ifelse(play_direction == 'left', abs(dir - 180), dir),
+    dir_ball = ifelse(play_direction == 'left', abs(dir_ball - 180), dir_ball),
+    x_end = s*cos((90 - dir)*pi / 180) + x,
+    y_end = s*sin((90 - dir)*pi / 180) + y,
+    x_ball_end = s_ball*cos((90 - dir_ball) * pi/180) + x_ball,
+    y_ball_end = s_ball*sin((90 - dir_ball)*pi / 180) + y_ball,
+    angle_to_ball = abs((atan2( (y_ball - y), (x_ball - x)) * (180/pi))),
+    dist_from_ball = sqrt( ((x - x_ball) ** 2) + ((y - y_ball) ** 2) ),
+    dist_from_ball_end = sqrt( ((x_end - x_ball_end) ** 2) + ((y_end - y_ball_end) ** 2)) ,
+    dist_from_ball_end = ifelse(is.na(dist_from_ball_end), 0, dist_from_ball_end),
+    towards_ball = ifelse(dist_from_ball < dist_from_ball_end, 1, 0)
+  ) 
+
+set.seed(527)
+# pull random games
+games_subset <- tracking |> count(game_id) |> collect() |> slice_sample(n = 50) |> pull(game_id)
+
+df <- tracking |> 
+  filter(
+    club != possession_team,
+    is.na(pass_result),
+    as_date(time) == '2022-10-23'
+    #game_id %in% games_subset
+    ) |> 
+  collect() |> 
+  mutate(tackle = replace_na(tackle, 0),
+         assist = replace_na(assist, 0),
+         tackle = ifelse(tackle > 0 | assist > 0, 1, 0),
+         tackle = as.factor(tackle)) 
+
+
+#DBI::dbDisconnect(con)
+
+```
+
+You can add options to executable code like this 
+
+```{r}
+library(tidymodels)
+
+set.seed(527)
+spl <- group_initial_split(df, game_id, prop = 3/4)
+df_train <- training(spl)
+df_test <- testing(spl)  
+
+```
+
+## Random Forest
+
+Tuning Random forest model 
+
+```{r}
+
+doParallel::registerDoParallel()
+
+tune_spec <- rand_forest(
+  mtry = tune(),
+  trees = 1000,
+  min_n = tune()
+) %>%
+  set_mode("classification") %>%
+  set_engine("ranger")
+
+tree_rec <- recipe(tackle ~ frame_id + dist_from_ball + s + a + angle_to_ball + down + yards_to_go, data = df_train) 
+
+tune_wf <- workflow() %>%
+  add_recipe(tree_rec) %>%
+  add_model(tune_spec)
+
+
+set.seed(234)
+vfolds <- vfold_cv(df_train |> slice_sample(n = 50000))
+
+set.seed(345)
+tune_res <- tune_grid(
+  tune_wf,
+  resamples = vfolds,
+  grid = 10
+)
+
+tune_res
+
+tune_res %>%
+  collect_metrics() %>%
+  filter(.metric == "roc_auc") %>%
+  arrange(-mean) |>
+  select(mean, min_n, mtry) %>%
+  pivot_longer(min_n:mtry,
+    values_to = "value",
+    names_to = "parameter"
+  ) %>%
+  arrange(value) |>
+  ggplot(aes(value, mean, color = parameter)) +
+  geom_path(show.legend = FALSE) +
+  facet_wrap(~parameter, scales = "free_x") +
+  labs(x = NULL, y = "AUC")
+
+
+tune_res |>
+  collect_metrics()
+```
+
+Using tuned specs to run random forest
+
+```{r}
+
+set.seed(527)
+
+
+rf_mod <- 
+  rand_forest(mode = "classification", trees = 1000, min_n = 5, mtry = 4) %>%
+  set_engine("ranger", num.threads = 6, importance = 'impurity')
+
+rf_workflow <- 
+  workflow() |> 
+  add_model(rf_mod) |> 
+  add_recipe(tree_rec)
+
+rf_fit <- 
+  rf_workflow |> 
+  fit(df_train)
+
+
+rf_fit |> 
+  extract_fit_parsnip() |> 
+  vip::vip(num_features = 10)
+
+rf_pred_train <- 
+  rf_fit |> 
+    predict(df_train |> select(-contains('.pred')), type = 'prob') |> 
+  mutate(
+    tackle = df_train$tackle,
+    .pred_class = round(.pred_1)
+         ) 
+
+rf_pred_train |> 
+    roc_curve(tackle, .pred_0) |> 
+    autoplot()
+  
+rf_pred_train |>  
+  count(tackle, .pred_class) |> 
+  pivot_wider(id_cols = tackle, names_from = .pred_class, values_from = n)
+
+
+rf_pred_test <- 
+  rf_fit |> 
+    predict(df_test |> select(-contains('.pred')), type = 'prob') |> 
+  mutate(
+    tackle = df_test$tackle,
+    .pred_class = round(.pred_1)
+         ) 
+
+rf_pred_test |> 
+    roc_curve(tackle, .pred_0) |> 
+    autoplot()
+  
+rf_pred_test |> 
+  count(tackle, .pred_class) |> 
+  pivot_wider(id_cols = tackle, names_from = .pred_class, values_from = n)
+```
+
+save and clean up memory space
+
+```{r}
+
+saveRDS(rf_fit, 'models/random_forest.rds')
+
+rm(rf_fit)
+gc()
+```
+
+
+# XGB
+
+Tune XBG model 
+
+```{r}
+
+doParallel::registerDoParallel()
+
+xgb_tune_spec <- boost_tree(
+   mtry = tune(),
+   trees = 1000,
+   min_n = tune(),
+   tree_depth = 11,
+   learn_rate = 0.1,
+   loss_reduction = tune(),
+   sample_size = tune(),
+   stop_iter = 15
+) %>%
+  set_mode("classification") %>%
+  set_engine("xgboost")
+
+tune_wf <- workflow() %>%
+  add_recipe(tree_rec) %>%
+  add_model(xgb_tune_spec)
+
+
+set.seed(345)
+tune_res <- tune_grid(
+  tune_wf,
+  resamples = vfolds,
+  grid = 10
+)
+
+tune_res
+
+tune_res %>%
+  collect_metrics() %>%
+  filter(.metric == "roc_auc") %>%
+  arrange(-mean) |> 
+  select(
+    -contains("."), 
+    -n, 
+    -std_err) %>%
+  pivot_longer(!mean,
+    values_to = "value",
+    names_to = "parameter"
+  ) %>%
+  arrange(value) |> 
+  ggplot(aes(value, mean, color = parameter)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~parameter, scales = "free_x") +
+  labs(x = NULL, y = "AUC")
+
+
+tune_res |> 
+  show_best()
+
+
+
+```
+
+Run XGB based on tuned specs
+
+```{r}
+
+set.seed(527)
+
+
+
+xgb_spec <- boost_tree(
+   mtry = 3,
+   trees = 1000,
+   min_n = 3,
+   tree_depth = 11,
+   learn_rate = 0.1,
+   loss_reduction = 3.179323e-09,
+   sample_size = 0.818,
+   stop_iter = 15
+) %>%
+  set_mode("classification") %>%
+  set_engine("xgboost")
+
+
+xgb_workflow <- 
+  workflow() |> 
+  add_model(xgb_spec) |> 
+  add_recipe(tree_rec)
+
+xgb_fit <- 
+  xgb_workflow |> 
+  fit(df_train)
+
+xgb_fit |> 
+  extract_fit_parsnip() |> 
+  vip::vip(num_features = 10)
+
+xgb_pred_train <- 
+  xgb_fit |> 
+    predict(df_train |> select(-contains('.pred')), type = 'prob') |> 
+  mutate(
+    tackle = df_train$tackle,
+    .pred_class = round(.pred_1)
+         ) 
+
+xgb_pred_train |> 
+    roc_curve(tackle, .pred_0) |> 
+    autoplot()
+  
+xgb_pred_train |> 
+  count(tackle, .pred_class) |> 
+  pivot_wider(id_cols = tackle, names_from = .pred_class, values_from = n)
+
+
+xgb_pred_test <- 
+  xgb_fit |> 
+    predict(df_test |> select(-contains('.pred')), type = 'prob') |> 
+  mutate(
+    tackle = df_test$tackle,
+    .pred_class = round(.pred_1)
+         ) 
+
+xgb_pred_test |> 
+    roc_curve(tackle, .pred_0) |> 
+    autoplot()
+  
+xgb_pred_test |> 
+  count(tackle, .pred_class) |> 
+  pivot_wider(id_cols = tackle, names_from = .pred_class, values_from = n)
+
+rf_pred_test |> 
+  roc_curve(tackle, .pred_0) |> 
+  mutate(model = 'randomforest') |> 
+  bind_rows(
+    xgb_pred_test |> 
+      roc_curve(tackle, .pred_0) |> 
+      mutate(model = 'xgb')
+  ) |> 
+  ggplot(aes(1 - specificity, sensitivity, color = model)) +
+  geom_line() + 
+  geom_abline(slope = 1, intercept = 0, linetype = 'dashed') +
+  coord_fixed(xlim = c(0, 1), ylim = c(0, 1))
+
+
+```
+
+
+```{r}
+saveRDS(df_train, 'models/training_data.rds')
+saveRDS(df_test, 'models/testing_data.rds')
+saveRDS(xgb_fit, 'models/xgb_fit.rds')
+
+rm(xgb_fit)
+gc()
+```
+
+
+
+
+
+
+
+
+```{r}
+
+GAME_ID <- 2022110300
+PLAY_ID <- 1182
+PTEAM <- 'PHI'
+
+example_play <- df_train |> 
+  #filter(tackle == 1) |> 
+  filter(game_id == GAME_ID, play_id == PLAY_ID) |> 
+  bind_rows(
+    tracking |> 
+      filter(game_id == GAME_ID, play_id == PLAY_ID, club == PTEAM) |> 
+      collect() |> 
+      mutate(tackle = as.factor(tackle))
+  ) 
+```
+
+
+
+
+```{r}
+library(gganimate)
+
+
+p <- ggplot(example_play, aes(x, y)) +
+  geom_point(aes(shape = club, color = .pred_1), size = 3, data = \(x) x |> filter(ball_carrier_id != nfl_id))  +
+  geom_point(aes(shape = club), size = 3, data = \(x) x |> filter(ball_carrier_id == nfl_id), color = 'cyan', shape = 23, fill = 'cyan')  +
+  geom_segment(aes(x = x, y = y, xend = x_end, yend = y_end, color = .pred_1), data = \(x) x |> filter(ball_carrier_id != nfl_id)) +
+    geom_segment(aes(x = x, y = y, xend = x_end, yend = y_end), data = \(x) x |> filter(ball_carrier_id == nfl_id), color = 'cyan') +
+  scale_color_gradient2(midpoint = 0.6, low = muted('blue'), high = 'firebrick', mid = 'red') +
+  scale_shape_manual(values = c(16, 4)) +
+  coord_fixed(xlim = c(0, 60), ylim = c(0, 50)) +
+  #xlim(c(0, 53.3)) +
+  transition_time(frame_id) +
+  ease_aes('linear') +
+    theme_minimal() +
+  theme(
+    legend.position = c(.5, .1),
+    legend.direction = 'horizontal',
+    panel.grid.minor = element_blank()
+  ) +
+
+  labs(shape = NULL,
+       color = 'Tackle Probability') +
+  NULL
+
+
+a <- animate(p, fps = 10, nframe = length(unique(example_play$frame_id)))
+a
+anim_save('~/Desktop/test.gif', a)
+
+```
+
+
+
+
+### Predictions
+
+```{r}
+
+
+rf_test_pred <- 
+  predict(rf_mod, new_data = df_test) %>% 
+  bind_cols(predict(rf_mod, df_test, type = "prob"))
+
+
+df_test <-  df_test |> 
+    bind_cols(rf_test_pred)
+
+df_test |> #roc_auc(truth = tackle, .pred_class) 
+  #group_by(play_id, nfl_id) |> 
+  #summarise(.pre)
+  count(tackle, .pred_class) |> 
+  #mutate(n = n/sum(n)) |> 
+  pivot_wider(id_cols = tackle, names_from = .pred_class, values_from = n)
+
+
+
+```
+
+
+
+```{r}
+
+GAME_ID <- 2022102300
+PLAY_ID <- 409
+PTEAM <- 'BAL'
+
+example_play <- df_test |> 
+  #filter(tackle == 1) |> 
+  filter(game_id == GAME_ID, play_id == PLAY_ID) |> 
+  bind_rows(
+    tracking |> 
+      filter(game_id == GAME_ID, play_id == PLAY_ID, club == PTEAM) |> 
+      collect() |> 
+      mutate(tackle = as.factor(tackle))
+  ) 
+```
+
+
+
+
+```{r}
+library(gganimate)
+
+
+p <- ggplot(example_play, aes(x, y)) +
+  geom_point(aes(shape = club, color = .pred_1), size = 3, data = \(x) x |> filter(ball_carrier_id != nfl_id))  +
+  geom_point(aes(shape = club), size = 3, data = \(x) x |> filter(ball_carrier_id == nfl_id), color = 'cyan', shape = 23, fill = 'cyan')  +
+  geom_segment(aes(x = x, y = y, xend = x_end, yend = y_end, color = .pred_1), data = \(x) x |> filter(ball_carrier_id != nfl_id)) +
+    geom_segment(aes(x = x, y = y, xend = x_end, yend = y_end), data = \(x) x |> filter(ball_carrier_id == nfl_id), color = 'cyan') +
+  scale_color_gradient2(midpoint = 0.6, low = muted('blue'), high = 'firebrick', mid = 'red') +
+  scale_shape_manual(values = c(16, 4)) +
+  coord_fixed(xlim = c(0, 60), ylim = c(0, 50)) +
+  #xlim(c(0, 53.3)) +
+  transition_time(frame_id) +
+  ease_aes('linear') +
+    theme_minimal() +
+  theme(
+    legend.position = c(.5, .1),
+    legend.direction = 'horizontal',
+    panel.grid.minor = element_blank()
+  ) +
+
+  labs(shape = NULL,
+       color = 'Tackle Probability') +
+  NULL
+
+
+a <- animate(p, fps = 10, nframe = length(unique(example_play$frame_id)))
+a
+#anim_save('~/Desktop/test.gif', a)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
