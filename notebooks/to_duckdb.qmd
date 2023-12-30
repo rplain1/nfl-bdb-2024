@@ -56,3 +56,50 @@ tbl(con, "tracking")
 tbl(con, "tackles")
 ```
 
+
+```{r}
+read_csv_week <- function(file_name) {
+    message(file_name)
+    
+  readr::read_csv(file_name) %>%
+    dplyr::mutate(
+      week = str_extract(file_name, '\\d'),
+        x = ifelse(playDirection == 'left', 120-x, x),
+        y = ifelse(playDirection == 'left', 160/3 - y, y)
+      ) %>% 
+    group_by(gameId, playId) %>%
+    dplyr::mutate(
+        x_start = min(ifelse(club == 'football' & frameId == 1, x, NA), na.rm = TRUE)
+    ) %>% 
+    dplyr::ungroup() %>%
+    dplyr::mutate(x = x - x_start) %>%
+    dplyr::mutate(
+        o = ifelse(playDirection == 'left', abs(o - 180), o), 
+        dir = ifelse(playDirection == 'left', abs(dir - 180), dir),
+        x_end = s*cos((90 - dir)*pi / 180) + x,
+        y_end = s*sin((90 - dir)*pi / 180) + y,
+    ) %>%
+    dplyr::group_by(gameId, playId, frameId) %>%
+    mutate(
+        x_ball = min(if_else(club == 'football', x, NA), na.rm = TRUE),
+        y_ball = min(if_else(club == 'football', y, NA), na.rm = TRUE),
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(
+        dist_from_ball = sqrt( ((x - x_ball) ** 2) + ((y - y_ball) ** 2) )
+    ) %>%
+    janitor::clean_names()
+}
+
+project_dir <- 'data'
+
+df_tracking <- paste0(project_dir, '/', list.files(path = project_dir, pattern = "tracking*")) %>% 
+  map_dfr(read_csv_week)
+
+DBI::dbWriteTable(con, "tracking2", df_tracking, overwrite = TRUE)
+message("Table Updated")
+
+
+```
+
+
